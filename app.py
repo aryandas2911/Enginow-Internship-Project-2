@@ -13,9 +13,9 @@ def get_age_group(age):
     else:
         return "50+"
 
-model = joblib.load("models/xgb_credit_risk_model.pkl")
-scaler = joblib.load("models/scaler.pkl")
-feature_columns = joblib.load("models/feature_columns.pkl")
+model = joblib.load("xgb_credit_risk_model.pkl")
+scaler = joblib.load("scaler.pkl")
+feature_columns = joblib.load("feature_columns.pkl")
 
 st.set_page_config(page_title="Credit Risk Prediction", layout="centered")
 
