@@ -11,6 +11,11 @@ This project covers the full ML lifecycle:
 
 ---
 
+## Live Demo
+https://credit-defaullt-risk-prediction.streamlit.app/
+
+---
+
 ## 🚀 Features
 
 - XGBoost model with high ROC-AUC (~0.946)
