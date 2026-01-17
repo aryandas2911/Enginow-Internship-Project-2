@@ -1,28 +1,108 @@
-Predict whether a loan applicant will default (high risk) or not default (low risk), using demographic, financial, and credit history features — to reduce lender risk.
+# 🏦 XGBoost Credit Risk Prediction App
 
-Target Variable: loan_status (0: low risk and 1: high risk) [Binary classification]
-Focus on Recall & Precision, not just accuracy
+An end-to-end Machine Learning project that predicts **credit default risk** using an optimized **XGBoost classifier**, deployed via **Streamlit**.
 
-person_age Age (Numerical) 
-person_income Annual Income (Numerical) 
-person_home_ownership Home ownership (Categorical)
-person_emp_length Employment length (in years) (Numerical) 
-loan_intent Loan intent (Categorical)
-loan_grade Loan grade (Categorical)
-loan_amnt Loan amount (Numerical) 
-loan_int_rate Interest rate (Numerical) 
-loan_status Loan status (0 is non default 1 is default) (Numerical) 
-loan_percent_income Percent income (Numerical) 
-cb_person_default_on_file Historical default (Categorical)
-cb_preson_cred_hist_length Credit history length (Numerical)
+This project covers the full ML lifecycle:
+- Feature engineering
+- Handling class imbalance (SMOTE)
+- Model tuning
+- Model persistence
+- Interactive web deployment
 
-EDA Analysis:
-1. Most applicants have low risk
-2. Applicants within age group 18-25 have the highest number with most defaults (high risk)
-3. Applicants with low risk have higher annual income than applicants with high risk
-4. Most applicants have loan grade as A followed by B, but, most high risk applicants are in loan grade D
-5. There are more risky applicants with no historical default because that group is much larger overall. Proportionally, applicants with past defaults are still riskier.
-6. 'loan_status' has low pearson correlation with all features
-7. There are some outliers in applicants annual incomes
-8. Most of the applicants have a loan requirement within 12500 to 5000 but there are some with high loan requirements like 35000 as well
-9. Most applicants have got a loan within interest rate of 12.5 to 7.5 but some have recevied upto 22.5 as well
+---
+
+## 🚀 Features
+
+- XGBoost model with high ROC-AUC (~0.946)
+- Custom feature engineering (`age_group`)
+- One-hot encoding using `pd.get_dummies`
+- Scaler + model persistence
+- Real-time predictions via Streamlit UI
+
+---
+
+## 📊 Model Performance (Best Model)
+
+| Metric     | Score |
+|------------|-------|
+| Accuracy   | 0.933 |
+| Precision  | 0.932 |
+| Recall     | 0.748 |
+| F1-Score   | 0.830 |
+| ROC-AUC    | 0.946 |
+
+> The tuned SMOTE XGBoost model was selected due to **better recall and balanced F1-score**, making it suitable for imbalanced classification.
+
+---
+
+## 🧩 Feature Engineering
+
+### Age Group Creation
+```python
+X["age_group"] = pd.cut(X["person_age"], bins=[18, 25, 35, 50, 100], labels=["18-25", "26-35", "36-50", "50+"])
+```
+
+---
+
+### Encoding
+
+Categorical features are encoded using:
+```python
+pd.get_dummies(drop_first=True)
+```
+The same encoded feature columns must be preserved during inference.
+
+---
+
+## 💾 Model Saving
+
+```python
+import joblib
+
+joblib.dump(best_xgb_model, "xgb_model.pkl")
+joblib.dump(scaler, "scaler.pkl")
+joblib.dump(feature_columns, "features.pkl")
+```
+
+Saved objects:
+- xgb_credit_risk_model.pkl → trained XGBoost model
+- scaler.pkl → fitted scaler
+- feature_columns.pkl → list of encoded feature names
+
+---
+
+## 🌐 Streamlit Deployment
+
+```python
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+Streamlit Workflow:
+- User inputs data via UI
+- age_group is created dynamically
+- Data is encoded using get_dummies
+- Missing dummy columns are added (set to 0)
+- Features are scaled
+- Model predicts default risk
+
+---
+
+## 🛠️ Tech Stack
+
+- Language: Python
+- ML Model: XGBoost
+- Data Processing: Pandas, NumPy
+- Imbalance Handling: SMOTE
+- Deployment: Streamlit
+- Model Persistence: Joblib
+- Data analysis: Matplotlib, Seaborn
+
+---
+
+## 🎯 Key Takeaways
+
+- Encoding consistency is non-negotiable
+- Feature engineering must be mirrored at inference
+- Recall matters more than accuracy in risk modeling
+- SMOTE + tuning gave the best real-world balance
